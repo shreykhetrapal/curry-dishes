@@ -52,3 +52,12 @@ add_new_ingredients <- function(all_details, ingredient_list){
   
   ingredient_list %>% saveRDS("ingredient_list.rds")
 }
+
+# Extract Dish and author name
+extract_dishes <- function(dishes_list){
+  
+  tibble(serial = dishes_list$s_no,
+         dish = dishes_list$name, 
+         author = dishes_list$name)
+  
+}
