@@ -6,6 +6,9 @@ library(stringr)
 library(tokenizers)
 
 source("dishes_functions.R")
+dishes_list <- readRDS("dishes_list.rds")
+unit_list <- c("grams","kg", "spoon","cup", "piece")
+ingredient_list <- readRDS("ingredient_list.rds")
 
 ui <- fluidPage(
   titlePanel("Curry Dishes"),
@@ -14,7 +17,8 @@ ui <- fluidPage(
     "Header",
     tabPanel("Choose Dish",
              column(6, 
-                    h3("This will have options to choose the dish and make customisations")
+                    h3("Choose a dish"),
+                    DT::dataTableOutput("view_dishes")
              ), 
              column(6, 
                     h3("Space for the html output"))
@@ -61,11 +65,6 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  dishes_list <- readRDS("dishes_list.rds")
-  
-  unit_list <- c("grams","kg", "spoon","cup", "piece")
-  ingredient_list <- readRDS("ingredient_list.rds")
-  
   add_dish_table_reactive <- reactive({
     
     tibble(ingredient = "shrey",
@@ -91,7 +90,7 @@ server <- function(input, output, session) {
     
   })
   
-  
+  # Save a new dish
   observeEvent(input$save_ingredient, 
                {
                  # Gathering inputs
@@ -132,10 +131,11 @@ server <- function(input, output, session) {
                    })
                  }else {
                    
-                   dishes_list %>% length() -> numbering_of_dish
+                   dishes_list$data %>% length() -> numbering_of_dish
                   
                    # Making list of all items 
                    list(
+                     s_no = numbering_of_dish+1, 
                      author = author, 
                      name = name, 
                      dish_type = veg_non, 
@@ -146,16 +146,26 @@ server <- function(input, output, session) {
                      steps_to_make = steps
                    ) -> full_list
                    
-                   full_list -> dishes_list[[numbering_of_dish+1]]
+                   full_list -> dishes_list$data[[numbering_of_dish+1]]
                    
-                   dishes_list %>% saveRDS("dishes_list.rds")
+                   dishes_list$data %>% saveRDS("dishes_list.rds")
+                   
                    
                  }
                  
                })
   
   
-  
+  get_dishes <- reactive({
+    
+    dishes_list %>% 
+      map_dfr(extract_dishes)
+    
+  })
+  # View the dishes 
+  output$view_dishes <- renderDataTable({
+    get_dishes()
+  })
   
   
 }
