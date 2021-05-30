@@ -5,10 +5,18 @@ library(rhandsontable)
 library(stringr)
 library(tokenizers)
 library(rmarkdown)
+library(shinythemes)
+library(shinyWidgets)
+library(shinyjs)
 
 source("dishes_functions.R")
 
-ui <- fluidPage(
+
+
+ui <- tagList(
+  
+
+    fluidPage(
   titlePanel("Curry Dishes"),
   navlistPanel(
     widths = c(2, 10),
@@ -21,7 +29,7 @@ ui <- fluidPage(
              ), 
              column(6, 
                     h3("Space for the html output"),
-                    renderUI("view_html_dish"))
+                    htmlOutput("view_html_dish"))
              
     ),
     tabPanel("Add Dish",
@@ -61,6 +69,7 @@ ui <- fluidPage(
              h3("This is the third panel")
     )
   )
+)
 )
 
 server <- function(input, output, session) {
