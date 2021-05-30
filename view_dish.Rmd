@@ -1,0 +1,20 @@
+---
+title: "view_report"
+author: "Shrey"
+date: "5/30/2021"
+output: html_document
+params:
+  n: NA
+---
+
+
+```{r}
+# The `params` object is available in the document.
+params$n ->> passed_data
+```
+
+A plot of `params$n` random points.
+
+```{r}
+plot(rnorm(params$n), rnorm(params$n))
+```

@@ -4,6 +4,7 @@ library(DT)
 library(rhandsontable)
 library(stringr)
 library(tokenizers)
+library(rmarkdown)
 
 source("dishes_functions.R")
 
@@ -15,10 +16,12 @@ ui <- fluidPage(
     tabPanel("Choose Dish",
              column(6, 
                     h3("Choose a dish"),
-                    DT::dataTableOutput("view_dishes")
+                    DT::dataTableOutput("view_dishes"),
+                    actionButton("view_dish", "View")
              ), 
              column(6, 
-                    h3("Space for the html output"))
+                    h3("Space for the html output"),
+                    renderUI("view_html_dish"))
              
     ),
     tabPanel("Add Dish",
@@ -168,7 +171,30 @@ server <- function(input, output, session) {
   })
   # View the dishes 
   output$view_dishes <- renderDataTable({
-    get_dishes()
+    datatable(get_dishes(), 
+              selection = "single")
+  
+  })
+  
+  observeEvent(input$view_dish,{
+    
+    print(input$view_dishes_rows_selected)
+    input$view_dishes_rows_selected -> dish_id
+    
+    extract_dish_data(dishes_list$data, dish_id) ->> extracted_dish_data
+    
+    # Params for R Markdown
+    params <- list(n = extracted_dish_data)
+    
+    rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/dish.html',
+                      params = params,
+                      envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
+    )
+    
+    output$view_html_dish <- renderUI({
+      tags$iframe(style="height:740px; width:100%", src="dish.html")
+    })
+    
   })
   
   
