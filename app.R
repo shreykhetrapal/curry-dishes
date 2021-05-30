@@ -6,9 +6,6 @@ library(stringr)
 library(tokenizers)
 
 source("dishes_functions.R")
-dishes_list <- readRDS("dishes_list.rds")
-unit_list <- c("grams","kg", "spoon","cup", "piece")
-ingredient_list <- readRDS("ingredient_list.rds")
 
 ui <- fluidPage(
   titlePanel("Curry Dishes"),
@@ -65,6 +62,13 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
+  # dishes_list <- readRDS("dishes_list.rds")
+  dishes_list <- reactiveValues(data = readRDS("dishes_list.rds"))
+  
+  unit_list <- c("grams","kg", "spoon","cup", "piece")
+  # ingredient_list <- readRDS("ingredient_list.rds")
+  ingredient_list <- reactiveValues(data = readRDS("ingredient_list.rds"))
+  
   add_dish_table_reactive <- reactive({
     
     tibble(ingredient = "shrey",
@@ -82,7 +86,7 @@ server <- function(input, output, session) {
                   height = 300,
                   stretchH = "all", 
                   selectCallback = TRUE) %>%
-      hot_col(col = "ingredient", type = "autocomplete", source = ingredient_list, strict = F) %>% 
+      hot_col(col = "ingredient", type = "autocomplete", source = ingredient_list$data, strict = F) %>% 
       hot_col(col = "unit", type = "dropdown", source = unit_list) %>% 
       hot_validate_numeric(col = "quantity", min = 0.5) %>% 
       hot_validate_character(col = "unit", choices = unit_list)
@@ -119,7 +123,7 @@ server <- function(input, output, session) {
                  validate_input(all_details, unit_list) -> input_check 
                  
                  # Checking and adding new ingredients to list 
-                 add_new_ingredients(all_details, ingredient_list)
+                 add_new_ingredients(all_details, ingredient_list$data)
                  
                  if(input_check$flag == 1){
                    showModal({
@@ -150,7 +154,7 @@ server <- function(input, output, session) {
                    
                    dishes_list$data %>% saveRDS("dishes_list.rds")
                    
-                   
+                   dishes_list$data <- readRDS("dishes_list.rds")
                  }
                  
                })
@@ -158,7 +162,7 @@ server <- function(input, output, session) {
   
   get_dishes <- reactive({
     
-    dishes_list %>% 
+    dishes_list$data %>% 
       map_dfr(extract_dishes)
     
   })
