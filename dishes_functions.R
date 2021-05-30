@@ -58,6 +58,17 @@ extract_dishes <- function(dishes_list){
   
   tibble(serial = dishes_list$s_no,
          dish = dishes_list$name, 
-         author = dishes_list$name)
+         author = dishes_list$author)
+  
+}
+
+# Extract Dish data
+extract_dish_data <- function(dishes_list, serial){
+  
+  for(i in dishes_list){
+    if(i$s_no == serial){
+      return(dishes_list[[serial]])
+    }
+  }
   
 }
