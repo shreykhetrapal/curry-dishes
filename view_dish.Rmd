@@ -1,20 +1,39 @@
 ---
-title: "view_report"
-author: "Shrey"
-date: "5/30/2021"
+title: "`r 
+params$n -> data
+paste0(data$name)`"
+author: ""
+date: "`r paste0(Sys.Date())`"
 output: html_document
 params:
   n: NA
 ---
 
 
-```{r}
-# The `params` object is available in the document.
-params$n ->> passed_data
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(huxtable)
+library(tokenizers)
+
+params$n -> passed_data
 ```
 
-A plot of `params$n` random points.
+# Ingredients Table
 
-```{r}
-plot(rnorm(params$n), rnorm(params$n))
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+passed_data$ingredents %>% 
+  huxtable::as_hux()
+
 ```
+
+
+# Steps 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+passed_data$steps_to_make -> steps_character
+
+steps_character %>% 
+  tokenizers::tokenize_lines()
+```
+
