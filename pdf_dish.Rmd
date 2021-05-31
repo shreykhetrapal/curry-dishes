@@ -1,0 +1,50 @@
+---
+title: "`r 
+params$n -> data
+paste0(data$name)`"
+author: "`r paste0('by ',params$n$author)`"
+date: "`r paste0(Sys.Date())`"
+output: pdf_document
+params:
+  n: NA
+---
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(huxtable)
+library(tokenizers)
+library(tidyverse)
+
+params$n ->> passed_data
+```
+
+# Ingredients Table
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+passed_data$ingredents %>% 
+  huxtable::as_hux() %>% 
+  set_background_color(evens, everywhere, "grey95") %>% 
+  set_bold(row = 1,value =  TRUE)
+
+```
+
+
+# Steps 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+passed_data$steps_to_make -> steps_character
+
+steps_character %>% 
+  tokenizers::tokenize_lines() -> sentences
+
+sentences_tibble <- tibble(sentence = sentences[[1]])
+
+sentences_tibble %>% mutate(row_num = row_number(),
+                combined = paste0(row_num,". ", sentence)) %>% 
+  pull(combined) %>% 
+  cat(sep = "\n")
+
+```
+
