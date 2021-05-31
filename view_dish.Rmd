@@ -2,7 +2,7 @@
 title: "`r 
 params$n -> data
 paste0(data$name)`"
-author: ""
+author: "`r paste0('by ',params$n$author)`"
 date: "`r paste0(Sys.Date())`"
 output: html_document
 params:
@@ -23,7 +23,9 @@ params$n ->> passed_data
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 passed_data$ingredents %>% 
-  huxtable::as_hux()
+  huxtable::as_hux() %>% 
+  set_background_color(evens, everywhere, "grey95") %>% 
+  set_bold(row = 1,value =  TRUE)
 
 ```
 
