@@ -25,10 +25,13 @@ ui <- tagList(
              column(6, 
                     h3("Choose a dish"),
                     DT::dataTableOutput("view_dishes"),
-                    actionButton("view_dish", "View")
+                    column(2, 
+                           actionButton("view_dish", "View")), 
+                    column(2, 
+                           downloadButton("download_pdf", "PDF", icon = icon("file-download")))
              ), 
              column(6, 
-                    h3("Space for the html output"),
+                    h3("Preview dish"),
                     htmlOutput("view_html_dish"))
              
     ),
@@ -185,26 +188,53 @@ server <- function(input, output, session) {
   
   })
   
-  observeEvent(input$view_dish,{
+  # Extract parameters to be passed on to the RMD 
+  
+  parameter_list <- reactive({
     
-    print(input$view_dishes_rows_selected)
+    req(input$view_dishes_rows_selected)
+    
     input$view_dishes_rows_selected -> dish_id
     
-    extract_dish_data(dishes_list$data, dish_id) ->> extracted_dish_data
+    extract_dish_data(dishes_list$data, dish_id) -> extracted_dish_data
     
     # Params for R Markdown
     params <- list(n = extracted_dish_data)
     
-    rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/dish.html',
-                      params = params,
+  })
+  
+  observeEvent(input$view_dish,{
+    
+    
+    
+    rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/preview_dish.html',
+                      params = parameter_list(),
                       envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
     )
     
     output$view_html_dish <- renderUI({
-      tags$iframe(style="height:740px; width:100%", src="dish.html")
+      tags$iframe(style="height:740px; width:100%", src="preview_dish.html")
     })
     
   })
+  
+  output$download_pdf <- downloadHandler(
+    
+    filename = function() {
+      paste("dish.pdf")
+    },
+    content = function(file) {
+      
+      # tempReport <- file.path(tempdir(),"pdf_dish.rmd")
+      # file.copy("pdf_dish.Rmd", tempReport, overwrite = TRUE)
+      
+      rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = file,
+                        params = parameter_list(),
+                        envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
+      )
+      
+    }
+  )
   
   
 }
