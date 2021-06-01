@@ -65,7 +65,7 @@ ui <- tagList(
                     h5("Start by adding ingredients"), 
                     
                     rHandsontableOutput("add_dish_table"),
-                    actionButton("save_ingredient", "Add ingredient")
+                    actionButton("add_dish", "Add Dish")
              ),
              column(5, 
                     textAreaInput("steps", "Enter steps for making", 
@@ -85,9 +85,14 @@ server <- function(input, output, session) {
   
   dir.create(paste0("./downloaded_pdfs/",directory_name))
   
- 
   # dishes_list <- readRDS("dishes_list.rds")
   dishes_list <- reactiveValues(data = readRDS("dishes_list.rds"))
+  
+  observe({
+    updateSelectInput(session, "dish_author", choices = lapply(dishes_list$data, function(x) x$author) %>% 
+                                                            unlist() %>% 
+                                                            unique())
+  })
   
   unit_list <- c("grams","kg", "spoon","cup", "piece")
   # ingredient_list <- readRDS("ingredient_list.rds")
@@ -112,14 +117,14 @@ server <- function(input, output, session) {
                   selectCallback = TRUE) %>%
       hot_col(col = "ingredient", type = "autocomplete", source = ingredient_list$data, strict = F) %>% 
       hot_col(col = "unit", type = "dropdown", source = unit_list) %>% 
-      hot_validate_numeric(col = "quantity", min = 0.5) %>% 
+      hot_validate_numeric(col = "quantity", min = 0.25) %>% 
       hot_validate_character(col = "unit", choices = unit_list)
       
     
   })
   
   # Save a new dish
-  observeEvent(input$save_ingredient, 
+  observeEvent(input$add_dish, 
                {
                  # Gathering inputs
                  input$dish_name ->> name
