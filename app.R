@@ -156,13 +156,15 @@ server <- function(input, output, session) {
                  add_new_ingredients(all_details, ingredient_list$data)
                  
                  if(input_check$flag == 1){
-                   showModal({
-                     modalDialog(title = "Error", 
-                                 h4(input_check$error_msg), 
-                                 size = "s", 
-                                 easyClose = TRUE
-                                 )
-                   })
+                   
+                   show_toast(
+                     title = "Ooops",
+                     text = input_check$error_msg,
+                     type = "error",
+                     width = "500px",
+                     position = "top"
+                   )
+                   
                  }else {
                    
                    dishes_list$data %>% length() -> numbering_of_dish
@@ -186,13 +188,15 @@ server <- function(input, output, session) {
                    dishes_list$data %>% saveRDS("dishes_list.rds")
                    
                    dishes_list$data <- readRDS("dishes_list.rds")
+                   
+                   show_alert(
+                     title = "Success !!",
+                     text = "All in order",
+                     type = "success"
+                   )
                  }
                  
-                 show_alert(
-                   title = "Success !!",
-                   text = "All in order",
-                   type = "success"
-                 )
+                 
                  
                })
   
