@@ -188,6 +188,12 @@ server <- function(input, output, session) {
                    dishes_list$data <- readRDS("dishes_list.rds")
                  }
                  
+                 show_alert(
+                   title = "Success !!",
+                   text = "All in order",
+                   type = "success"
+                 )
+                 
                })
   
   
@@ -241,6 +247,15 @@ server <- function(input, output, session) {
     max = 3, 
     value = 1, 
     message = "Fetching dish")
+    
+    show_toast(
+      title = "Here's the yummy dish",
+      text = "Enjoy",
+      type = "success",
+      timer = 2000,
+      timerProgressBar = TRUE,
+      position = "bottom-end",
+    )
     
     
   })
