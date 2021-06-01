@@ -228,7 +228,7 @@ server <- function(input, output, session) {
       # tempReport <- file.path(tempdir(),"pdf_dish.rmd")
       # file.copy("pdf_dish.Rmd", tempReport, overwrite = TRUE)
       
-      rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = file,
+      rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = 'www/pdf_dish.pdf',
                         params = parameter_list(),
                         envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
       )
