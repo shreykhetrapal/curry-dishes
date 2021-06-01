@@ -8,6 +8,7 @@ library(rmarkdown)
 library(shinythemes)
 library(shinyWidgets)
 library(shinyjs)
+library(tictoc)
 
 source("dishes_functions.R")
 
@@ -50,7 +51,10 @@ ui <- tagList(
                     fluidRow(
                       column(6, 
                              selectInput("dish_type", "Type", choices = c("Veg", "Non Veg")),
-                             sliderInput("dish_spice", "Spice Level", min = 0, max = 5, step = 1, value = 3)
+                             column(6,
+                                    sliderInput("dish_spice", "Spice Level", min = 0, max = 5, step = 1, value = 3)),
+                             column(6, 
+                                    selectInput("cooking_time", "Approx Time", choices = c("10 min","15 min", "30 min", "45 min", "1 hr", "1 hr 15 min", "1 hr 30 min", "2 hr", "Greater than 2 hr")))
                       ), 
                       column(6, 
                              selectInput("meal_type", "Meal Type", choices = c("Breakfast", "Lunch", "Dinner", "Snack")), 
@@ -77,6 +81,11 @@ ui <- tagList(
 
 server <- function(input, output, session) {
   
+  directory_name <<- as.numeric(Sys.time()) %>% as.character() %>% str_remove_all("\\.")
+  
+  dir.create(paste0("./downloaded_pdfs/",directory_name))
+  
+ 
   # dishes_list <- readRDS("dishes_list.rds")
   dishes_list <- reactiveValues(data = readRDS("dishes_list.rds"))
   
@@ -205,6 +214,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$view_dish,{
   
+   
     withProgress({
       
       rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/preview_dish.html',
@@ -212,13 +222,14 @@ server <- function(input, output, session) {
                         envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
       )
       
-      setProgress(value = 2, message = "Showing dish")
+      incProgress(amount = 1.5, message = "Showing dish")
       
       output$view_html_dish <- renderUI({
         tags$iframe(style="height:740px; width:100%", src="preview_dish.html")
       })
       
     }, 
+    
     min = 0, 
     max = 3, 
     value = 1, 
@@ -236,10 +247,12 @@ server <- function(input, output, session) {
       
       withProgress({
         
-        rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = "www/pdf_dish.pdf",
+        rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = paste0("downloaded_pdfs/",directory_name,"/","pdf_dish.pdf"),
                           params = parameter_list(),
                           envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
         )
+        
+        setProgress(value = 2, message = "Generation complete")
         
       }, 
       min = 0,
