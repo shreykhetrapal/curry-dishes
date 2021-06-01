@@ -204,34 +204,50 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$view_dish,{
+  
+    withProgress({
+      
+      rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/preview_dish.html',
+                        params = parameter_list(),
+                        envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
+      )
+      
+      setProgress(value = 2, message = "Showing dish")
+      
+      output$view_html_dish <- renderUI({
+        tags$iframe(style="height:740px; width:100%", src="preview_dish.html")
+      })
+      
+    }, 
+    min = 0, 
+    max = 3, 
+    value = 1, 
+    message = "Fetching dish")
     
-    
-    
-    rmarkdown::render("view_dish.Rmd", output_format = "html_document", output_file = 'www/preview_dish.html',
-                      params = parameter_list(),
-                      envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
-    )
-    
-    output$view_html_dish <- renderUI({
-      tags$iframe(style="height:740px; width:100%", src="preview_dish.html")
-    })
     
   })
   
   output$download_pdf <- downloadHandler(
     
     filename = function() {
-      paste("dish.pdf")
+      paste("")
     },
     content = function(file) {
       
-      # tempReport <- file.path(tempdir(),"pdf_dish.rmd")
-      # file.copy("pdf_dish.Rmd", tempReport, overwrite = TRUE)
-      
-      rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = 'www/pdf_dish.pdf',
-                        params = parameter_list(),
-                        envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
-      )
+      withProgress({
+        
+        rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = "www/pdf_dish.pdf",
+                          params = parameter_list(),
+                          envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
+        )
+        
+      }, 
+      min = 0,
+      max = 3, 
+      value = 1, 
+      message = "Generating pdf", 
+      detail = "this may take a while")
+     
       
     }
   )
