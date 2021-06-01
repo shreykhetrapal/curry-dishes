@@ -16,7 +16,7 @@ source("dishes_functions.R")
 
 ui <- tagList(
   
-
+  useSweetAlert(),
     fluidPage(
   titlePanel("Curry Dishes"),
   navlistPanel(
@@ -27,9 +27,26 @@ ui <- tagList(
                     h3("Choose a dish"),
                     DT::dataTableOutput("view_dishes"),
                     column(2, 
-                           actionButton("view_dish", "View")), 
+                           #actionButton("view_dish", "View")
+                           actionBttn(
+                             inputId = "view_dish",
+                             label = "View", 
+                             style = "bordered",
+                             color = "primary"
+                           )
+                           ), 
                     column(2, 
-                           downloadButton("download_pdf", "PDF", icon = icon("file-download")))
+                           #downloadButton("download_pdf", "PDF", icon = icon("file-download"))
+                           downloadBttn(
+                             "download_pdf",
+                             label = "PDF",
+                             style = "bordered",
+                             color = "primary",
+                             size = "sm",
+                             block = TRUE,
+                             no_outline = TRUE
+                           )
+                           )
              ), 
              column(6, 
                     h3("Preview dish"),
@@ -271,22 +288,22 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       
-      withProgress({
+        withProgress({
+          
+          rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = paste0("downloaded_pdfs/",directory_name,"/","pdf_dish.pdf"),
+                            params = parameter_list(),
+                            envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
+          )
+          
+          setProgress(value = 2, message = "Generation complete")
+          
+        }, 
+        min = 0,
+        max = 3, 
+        value = 1, 
+        message = "Generating pdf", 
+        detail = "this may take a while")
         
-        rmarkdown::render("pdf_dish.Rmd", output_format = "pdf_document", output_file = paste0("downloaded_pdfs/",directory_name,"/","pdf_dish.pdf"),
-                          params = parameter_list(),
-                          envir = new.env(parent = globalenv()),clean=F,encoding="utf-8"
-        )
-        
-        setProgress(value = 2, message = "Generation complete")
-        
-      }, 
-      min = 0,
-      max = 3, 
-      value = 1, 
-      message = "Generating pdf", 
-      detail = "this may take a while")
-     
       
     }
   )
