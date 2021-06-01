@@ -27,6 +27,15 @@ ui <- tagList(
     tabPanel("Choose Dish",
              column(6, 
                     h3("Choose a dish"),
+                    prettyCheckbox(
+                      inputId = "show_only_veg",
+                      label = "Veg", 
+                      value = FALSE,
+                      status = "success",
+                      shape = "curve",
+                      outline = TRUE,
+                      animation = "smooth"
+                    ),
                     DT::dataTableOutput("view_dishes"),
                     column(2, 
                            #actionButton("view_dish", "View")
@@ -222,8 +231,12 @@ server <- function(input, output, session) {
   
   get_dishes <- reactive({
     
+    input$show_only_veg -> veg_or_not
+    
+    paste0("show only veg ------ ", veg_or_not)
+    
     dishes_list$data %>% 
-      map_dfr(extract_dishes)
+      map_dfr(extract_dishes, veg_or_not) -> extracted_data
     
   })
   # View the dishes 
@@ -245,7 +258,15 @@ server <- function(input, output, session) {
     
     input$view_dishes_rows_selected -> dish_id
     
-    extract_dish_data(dishes_list$data, dish_id) -> extracted_dish_data
+    # Getting the updated table after selection of veg/non veg 
+    # Then extracting the serial number of the selected dish
+    get_dishes() -> updated_dishes
+    
+    updated_dishes %>% 
+      slice(dish_id) %>% 
+      pull(serial) -> dish_serial
+    
+    extract_dish_data(dishes_list$data, dish_serial) -> extracted_dish_data
     
     # Params for R Markdown
     params <- list(n = extracted_dish_data)

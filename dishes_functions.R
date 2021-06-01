@@ -54,7 +54,20 @@ add_new_ingredients <- function(all_details, ingredient_list){
 }
 
 # Extract Dish and author name
-extract_dishes <- function(dishes_list){
+extract_dishes <- function(dishes_list, only_veg = FALSE){
+  
+  if(only_veg == TRUE){
+    if(dishes_list$dish_type == "Veg"){
+      tibble(serial = dishes_list$s_no,
+             dish = dishes_list$name, 
+             author = dishes_list$author) -> dish_data
+      
+      return(dish_data) 
+    } else {
+      tibble() -> dish_data
+      return(dish_data)
+    }
+  }
   
   tibble(serial = dishes_list$s_no,
          dish = dishes_list$name, 
