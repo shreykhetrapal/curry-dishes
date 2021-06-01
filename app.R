@@ -229,7 +229,11 @@ server <- function(input, output, session) {
   # View the dishes 
   output$view_dishes <- renderDataTable({
     datatable(get_dishes(), 
-              selection = "single")
+              selection = "single", 
+              options = list(
+                columnDefs = list(list(visible=FALSE, targets=c(0))) 
+              )
+    )
   
   })
   
