@@ -54,7 +54,7 @@ ui <- tagList(
                              column(6,
                                     sliderInput("dish_spice", "Spice Level", min = 0, max = 5, step = 1, value = 3)),
                              column(6, 
-                                    selectInput("cooking_time", "Approx Time", choices = c("10 min","15 min", "30 min", "45 min", "1 hr", "1 hr 15 min", "1 hr 30 min", "2 hr", "Greater than 2 hr")))
+                                    selectInput("cooking_time", "Approx Time", choices = c("10 min","15 min", "30 min", "45 min", "1hr", "1hr 15 min", "1hr 30 min", "2hr","2hr 30 min", "More than 3 hr")))
                       ), 
                       column(6, 
                              selectInput("meal_type", "Meal Type", choices = c("Breakfast", "Lunch", "Dinner", "Snack")), 
@@ -129,6 +129,7 @@ server <- function(input, output, session) {
                  input$meal_type ->> meal_type
                  input$servings ->> servings
                  input$steps ->> steps
+                 input$cooking_time ->> cooking_time
                  
                  # gather data 
                  input$add_dish_table ->> dish_table
@@ -171,7 +172,8 @@ server <- function(input, output, session) {
                      meal_type = meal_type, 
                      servings = servings,
                      ingredents = ingredient_details,
-                     steps_to_make = steps
+                     steps_to_make = steps,
+                     cook_time = cooking_time
                    ) -> full_list
                    
                    full_list -> dishes_list$data[[numbering_of_dish+1]]

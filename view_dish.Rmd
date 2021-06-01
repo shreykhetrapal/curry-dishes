@@ -18,6 +18,16 @@ library(tidyverse)
 params$n ->> passed_data
 ```
 
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+# Extract and display servings 
+
+passed_data$cook_time -> cooking_time
+
+paste0("### Cooking time : ", cooking_time) %>% 
+  cat()
+
+```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
