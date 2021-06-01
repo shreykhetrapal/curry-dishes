@@ -9,6 +9,7 @@ library(shinythemes)
 library(shinyWidgets)
 library(shinyjs)
 library(tictoc)
+library(bslib)
 
 source("dishes_functions.R")
 
@@ -18,6 +19,7 @@ ui <- tagList(
   
   useSweetAlert(),
     fluidPage(
+  theme = "flatly",
   titlePanel("Curry Dishes"),
   navlistPanel(
     widths = c(2, 10),
