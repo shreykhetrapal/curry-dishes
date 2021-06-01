@@ -18,6 +18,34 @@ library(tidyverse)
 params$n ->> passed_data
 ```
 
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+# Extract and display servings 
+
+passed_data$servings -> servs
+
+paste0("### Serves : ", servs) %>% 
+  cat()
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+# Showing meal type 
+
+passed_data$meal_type -> meal_type
+
+if(meal_type == "Snack"){
+  meal_display <- paste0("a ",meal_type)
+}else{
+  meal_display <- meal_type
+}
+
+paste0("#### Usually served as ", meal_display) %>% 
+  cat()
+
+```
+
 # Ingredients Table
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -28,7 +56,6 @@ passed_data$ingredents %>%
   set_bold(row = 1,value =  TRUE)
 
 ```
-
 
 # Steps 
 
