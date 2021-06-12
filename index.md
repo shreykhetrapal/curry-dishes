@@ -1,37 +1,17 @@
-## Welcome to GitHub Pages
+# curry-dishes
 
-You can use the [editor on GitHub](https://github.com/shreykhetrapal/curry-dishes/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Created this fun project to help myself bring my inner cook to life as I travel to a new continent for my masters program
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+This app will help me keep all my dishes in one place. 
 
-### Markdown
+- I have added the functionalites to add a dish / view / and download them as nicely formatted pdf documents for the purpose of sharing
+ 
+- This is a Shiny App with which uses R Markdown to render the pdf 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Easily add dish details with steps 
 
-```markdown
-Syntax highlighted code block
+![Add dish](add_dish.gif)
 
-# Header 1
-## Header 2
-### Header 3
+## View the nicely formatted pdf with detailed intstructions in the browser (also download it as a pdf)
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/shreykhetrapal/curry-dishes/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+![View dish](view_dish.gif)
