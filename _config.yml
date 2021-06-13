@@ -1,1 +1,5 @@
 theme: jekyll-theme-minimal
+title: Bringing my inner cook to life
+description: View and download recipes for mouth watering dishes
+show_downloads: true
+google_analytics:
