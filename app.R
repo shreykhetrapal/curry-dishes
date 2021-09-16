@@ -23,7 +23,7 @@ ui <- tagList(
   titlePanel("Curry Dishes"),
   navlistPanel(
     widths = c(2, 10),
-    "Header",
+    "Options",
     tabPanel("Choose Dish",
              column(6, 
                     h3("Choose a dish"),
@@ -99,10 +99,10 @@ ui <- tagList(
                     textAreaInput("steps", "Enter steps for making", 
                                   resize = "vertical", 
                                   height = '400px'))
-    ),
-    tabPanel("Third",
-             h3("This is the third panel")
     )
+    # tabPanel("Third",
+    #          h3("This is the third panel")
+    # )
   )
 )
 )
@@ -122,7 +122,7 @@ server <- function(input, output, session) {
                                                             unique())
   })
   
-  unit_list <- c("grams","kg", "spoon","cup", "piece")
+  unit_list <- c("grams","kg", "spoon","cup", "piece", "fistful")
   # ingredient_list <- readRDS("ingredient_list.rds")
   ingredient_list <- reactiveValues(data = readRDS("ingredient_list.rds"))
   
