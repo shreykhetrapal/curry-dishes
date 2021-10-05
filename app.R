@@ -113,11 +113,11 @@ server <- function(input, output, session) {
   
   dir.create(paste0("./downloaded_pdfs/",directory_name))
   
-  # dishes_list <- readRDS("dishes_list.rds")
-  dishes_list <- reactiveValues(data = readRDS("dishes_list.rds"))
+  # dishes_list_new <- readRDS("dishes_list_new.rds")
+  dishes_list_new <- reactiveValues(data = readRDS("dishes_list_new.rds"))
   
   observe({
-    updateSelectInput(session, "dish_author", choices = lapply(dishes_list$data, function(x) x$author) %>% 
+    updateSelectInput(session, "dish_author", choices = lapply(dishes_list_new$data, function(x) x$author) %>% 
                                                             unlist() %>% 
                                                             unique())
   })
@@ -195,7 +195,7 @@ server <- function(input, output, session) {
                    
                  }else {
                    
-                   dishes_list$data %>% length() -> numbering_of_dish
+                   dishes_list_new$data %>% length() -> numbering_of_dish
                   
                    # Making list of all items 
                    list(
@@ -211,11 +211,11 @@ server <- function(input, output, session) {
                      cook_time = cooking_time
                    ) -> full_list
                    
-                   full_list -> dishes_list$data[[numbering_of_dish+1]]
+                   full_list -> dishes_list_new$data[[numbering_of_dish+1]]
                    
-                   dishes_list$data %>% saveRDS("dishes_list.rds")
+                   dishes_list_new$data %>% saveRDS("dishes_list_new.rds")
                    
-                   dishes_list$data <- readRDS("dishes_list.rds")
+                   dishes_list_new$data <- readRDS("dishes_list_new.rds")
                    
                    show_alert(
                      title = "Success !!",
@@ -235,7 +235,7 @@ server <- function(input, output, session) {
     
     paste0("show only veg ------ ", veg_or_not)
     
-    dishes_list$data %>% 
+    dishes_list_new$data %>% 
       map_dfr(extract_dishes, veg_or_not) -> extracted_data
     
   })
@@ -266,7 +266,7 @@ server <- function(input, output, session) {
       slice(dish_id) %>% 
       pull(serial) -> dish_serial
     
-    extract_dish_data(dishes_list$data, dish_serial) -> extracted_dish_data
+    extract_dish_data(dishes_list_new$data, dish_serial) -> extracted_dish_data
     
     # Params for R Markdown
     params <- list(n = extracted_dish_data)
