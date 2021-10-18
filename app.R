@@ -100,12 +100,14 @@ ui <- tagList(
                                   resize = "vertical", 
                                   height = '400px'))
     ),
-    tabPanel("Third",
+    tabPanel("Edit Dish",
              column(4, 
                     h3("Select a dish to edit"),
                     DT::dataTableOutput("view_dishes_to_edit"),
                     actionButton("edit_dish_selected", "Edit")
-                    )
+                    ),
+             column(8, 
+                    uiOutput("edit_dish_ui"))
     )
   )
 )
@@ -376,6 +378,57 @@ server <- function(input, output, session) {
     print(input$view_dishes_to_edit_rows_selected)
     
     edit_parameter_list() ->> edit_this_dish
+    
+    output$edit_dish_ui <- renderUI({
+      column(8, 
+             fluidRow(
+               column(6, 
+                      textInput("edit_dish_name", "Dish Name", value = edit_this_dish$n$name)
+               ), 
+               # column(6, 
+               #        selectizeInput("edit_dish_author", "Author", 
+               #                       options = list(create = TRUE), 
+               #                       choices = c("Shrey"))
+               # )
+             ),
+             fluidRow(
+               column(6, 
+                      selectInput("edit_dish_type", "Type", choices = c("Veg", "Non Veg")),
+                      column(6,
+                             sliderInput("edit_dish_spice", "Spice Level", min = 0, max = 5, step = 1, value = 3)),
+                      column(6, 
+                             selectInput("edit_cooking_time", "Approx Time", choices = c("10 min","15 min", "30 min", "45 min", "1hr", "1hr 15 min", "1hr 30 min", "2hr","2hr 30 min", "More than 3 hr")))
+               ), 
+               column(6, 
+                      selectInput("edit_meal_type", "Meal Type", choices = c("Breakfast", "Lunch", "Dinner", "Snack")), 
+                      sliderInput("edit_servings", "Serving", min = 1, max = 10, step = 1, value = 4)
+               )
+             ),
+             
+             h5("Start by adding ingredients"), 
+             
+             rHandsontableOutput("edit_dish_table")
+      )
+      
+    })
+    
+    output$edit_dish_table <- renderRHandsontable({
+      print("entered rhanddsontable")
+      
+      rhandsontable(edit_this_dish$n$ingredents, 
+                    width = 400, 
+                    height = 300,
+                    stretchH = "all", 
+                    selectCallback = TRUE) %>%
+        hot_col(col = "ingredient", type = "autocomplete", source = ingredient_list$data, strict = F) %>% 
+        hot_col(col = "unit", type = "dropdown", source = unit_list) %>% 
+        hot_validate_numeric(col = "quantity", min = 0.25) %>% 
+        hot_validate_character(col = "unit", choices = unit_list)
+      
+    })
+    
+    
+    
   })
   
  
