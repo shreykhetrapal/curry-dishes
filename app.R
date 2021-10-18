@@ -99,10 +99,10 @@ ui <- tagList(
                     textAreaInput("steps", "Enter steps for making", 
                                   resize = "vertical", 
                                   height = '400px'))
+    ),
+    tabPanel("Third",
+             h3("This is the third panel")
     )
-    # tabPanel("Third",
-    #          h3("This is the third panel")
-    # )
   )
 )
 )
