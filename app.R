@@ -101,7 +101,11 @@ ui <- tagList(
                                   height = '400px'))
     ),
     tabPanel("Third",
-             h3("This is the third panel")
+             column(4, 
+                    h3("Select a dish to edit"),
+                    DT::dataTableOutput("view_dishes_to_edit"),
+                    actionButton("edit_dish_selected", "Edit")
+                    )
     )
   )
 )
@@ -334,6 +338,48 @@ server <- function(input, output, session) {
       
     }
   )
+  
+  # Rendering table to edit
+  output$view_dishes_to_edit <- renderDataTable({
+    datatable(get_dishes(), 
+              selection = "single", 
+              options = list(
+                columnDefs = list(list(visible=FALSE, targets=c(0))) 
+              )
+    )
+    
+  })
+  
+  edit_parameter_list <- reactive({
+    
+    req(input$view_dishes_to_edit_rows_selected)
+    
+    input$view_dishes_to_edit_rows_selected -> dish_id
+    
+    # Getting the updated table after selection of veg/non veg 
+    # Then extracting the serial number of the selected dish
+    get_dishes() -> updated_dishes
+    
+    updated_dishes %>% 
+      slice(dish_id) %>% 
+      pull(serial) -> dish_serial
+    
+    extract_dish_data(dishes_list_new$data, dish_serial) -> extracted_dish_data
+    
+    # Params for R Markdown
+    params <- list(n = extracted_dish_data)
+    
+  })
+  
+  observeEvent(input$edit_dish_selected,{
+    
+    print(input$view_dishes_to_edit_rows_selected)
+    
+    edit_parameter_list() ->> edit_this_dish
+  })
+  
+ 
+  
   
   
 }
